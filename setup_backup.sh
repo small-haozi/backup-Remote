@@ -2,13 +2,15 @@
 
 # 获取用户输入的服务器信息
 read -p "请输入远程服务器IP: " REMOTE_HOST
-read -p "请输入服务器用户名: " REMOTE_USER
+read -p "请输入服务器用户名 [默认: root]: " REMOTE_USER
+REMOTE_USER=${REMOTE_USER:-root}
 read -sp "请输入服务器密码: " REMOTE_PASS
 echo
 read -p "请输入服务器端口 [默认: 22]: " REMOTE_PORT
 REMOTE_PORT=${REMOTE_PORT:-22}
 read -p "请输入远程目录: " REMOTE_DIR
-read -p "请输入本地目录: " LOCAL_DIR
+read -p "请输入本地目录 [默认: /root/backup-$REMOTE_HOST]: " LOCAL_DIR
+LOCAL_DIR=${LOCAL_DIR:-/root/backup-$REMOTE_HOST}
 
 # 保存到配置文件
 CONFIG_FILE="backup_config.conf"
