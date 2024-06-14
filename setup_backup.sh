@@ -10,7 +10,7 @@ if [ ! -d "$BACKUP_DIR" ]; then
     echo "已创建目录: $BACKUP_DIR"
 fi
 
-echo -e "\n\033[1;32m请输入服务器信息:\033[0m"
+echo -e "\033[1;94m请输入服务器信息:\033[0m"
 read -p "远程服务器IP: " REMOTE_HOST
 read -p "服务器用户名 [默认: root]: " REMOTE_USER
 REMOTE_USER=${REMOTE_USER:-root}
@@ -21,7 +21,7 @@ REMOTE_PORT=${REMOTE_PORT:-22}
 read -p "远程目录: " REMOTE_DIR
 read -p "本地目录 [默认: /root/backup-$REMOTE_HOST]: " LOCAL_DIR
 LOCAL_DIR=${LOCAL_DIR:-/root/backup-$REMOTE_HOST}
-echo -e "\n\033[1;32m备份文件数量设置:\033[0m"
+echo -e "\033[1;94m备份文件数量设置:\033[0m"
 read -p "是否设置最大备份文件数量? (y/n): " SET_MAX_BACKUPS
 if [ "$SET_MAX_BACKUPS" = "y" ]; then
     read -p "最大备份文件数量: " MAX_BACKUPS
@@ -105,11 +105,13 @@ EOF
 
 # 给 back.sh 脚本执行权限
 sudo chmod +x $BACKUP_DIR/back.sh
-echo -e "\033[1;32m配置文件和备份脚本已创建并保存在 $BACKUP_DIR。\033[0m"
+echo -e "======================================================"
+echo -e "\033[1;94m配置文件和备份脚本已创建并保存在\033[0m \033[1;92m $BACKUP_DIR。\033[0m"
 
 # 创建符号链接
 sudo ln -sf $BACKUP_DIR/back.sh /usr/local/bin/back.sh
-echo -e "\033[1;32m已创建符号链接，可以从任何位置运行 back.sh。\033[0m"
+echo -e "\033[1;32m已创建符号链接，可以从任何位置运行\033[0m \033[1;92m back.sh。\033[0m"
+echo -e "======================================================"
 
 # 安排在脚本执行完毕后删除自身
 nohup bash -c "sleep 2; rm -- \"$0\"" &>/dev/null &
