@@ -17,6 +17,14 @@ REMOTE_PORT=${REMOTE_PORT:-22}
 read -p "请输入远程目录: " REMOTE_DIR
 read -p "请输入本地目录 [默认: /root/backup-$REMOTE_HOST]: " LOCAL_DIR
 LOCAL_DIR=${LOCAL_DIR:-/root/backup-$REMOTE_HOST}
+read -p "是否设置最大备份文件数量? (y/n): " SET_MAX_BACKUPS
+if [ "$SET_MAX_BACKUPS" = "y" ]; then
+    read -p "请输入最大备份文件数量: " MAX_BACKUPS
+fi
+
+# 删除旧的配置文件和脚本（如果存在）
+sudo rm -f $BACKUP_DIR/backup_config.conf
+sudo rm -f $BACKUP_DIR/back.sh
 
 # 保存到配置文件
 CONFIG_FILE="$BACKUP_DIR/backup_config.conf"
@@ -26,6 +34,9 @@ echo "REMOTE_PASS=$REMOTE_PASS" >> $CONFIG_FILE
 echo "REMOTE_PORT=$REMOTE_PORT" >> $CONFIG_FILE
 echo "REMOTE_DIR=$REMOTE_DIR" >> $CONFIG_FILE
 echo "LOCAL_DIR=$LOCAL_DIR" >> $CONFIG_FILE
+if [ "$SET_MAX_BACKUPS" = "y" ]; then
+    echo "MAX_BACKUPS=$MAX_BACKUPS" >> $CONFIG_FILE
+fi
 
 # 创建 back.sh 脚本
 cat <<EOF > $BACKUP_DIR/back.sh
@@ -74,6 +85,15 @@ if sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \
     fi
 else
     echo "远程目录不存在。"
+fi
+
+# 管理本地备份文件数量
+if [ ! -z "\$MAX_BACKUPS" ]; then
+    cd \$LOCAL_DIR
+    if [ \$(ls -1 | wc -l) -gt \$MAX_BACKUPS ]; then
+        ls -t | tail -n +\$(expr \$MAX_BACKUPS + 1) | xargs rm -f
+        echo "超出最大备份文件数量，已删除最旧的备份文件。"
+    fi
 fi
 EOF
 
