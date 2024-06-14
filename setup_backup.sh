@@ -153,6 +153,7 @@ sudo ln -sf $BACKUP_DIR/back.sh /usr/local/bin/back.sh
 echo -e "\033[1;94m已创建符号链接，可以从任何位置运行\033[0m \033[1;92m back.sh。\033[0m"
 echo -e " "
 echo "======================================================"
+echo -e " "
 
 # 安排在脚本执行完毕后删除自身
 nohup bash -c "sleep 2; rm -- \"$0\"" &>/dev/null &
