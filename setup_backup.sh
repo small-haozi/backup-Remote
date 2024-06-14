@@ -73,5 +73,5 @@ EOF
 chmod +x back.sh
 echo "配置文件和备份脚本已创建。"
 
-# 删除 setup_backup.sh 脚本
-rm -- "$0"
+# 安排在脚本执行完毕后删除自身
+nohup bash -c "sleep 2; rm -- \"$0\"" &>/dev/null &
