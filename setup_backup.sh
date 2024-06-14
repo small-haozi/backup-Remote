@@ -1,8 +1,10 @@
 #!/bin/bash
 
-echo -e "\033[1;94m设置备份脚本\033[0m"
-
+echo -e "\033[1;94m远程备份脚本\033[0m"
+echo -e "\033[1;94m项目地址：（https://github.com/small-haozi/backup-Remote）"
+echo -e " "
 echo "======================================================"
+echo -e " "
 
 # 创建存储配置和脚本的目录
 BACKUP_DIR="/etc/back-Remote"
@@ -12,7 +14,6 @@ if [ ! -d "$BACKUP_DIR" ]; then
 fi
 
 echo -e "\033[1;94m请输入服务器信息:\033[0m"
-echo "======================================================"
 echo -e " "
 read -p "远程服务器IP: " REMOTE_HOST
 read -p "远程服务器用户名 [默认: root]: " REMOTE_USER
@@ -40,7 +41,6 @@ echo "======================================================"
 echo -e " "
 echo -e "\033[1;94m备份文件数量设置:\033[0m"
 echo -e " "
-echo "======================================================"
 read -p "是否设置最大备份文件数量? (y/n): " SET_MAX_BACKUPS
 if [ "$SET_MAX_BACKUPS" = "y" ]; then
     read -p "最大备份文件数量: " MAX_BACKUPS
@@ -87,7 +87,8 @@ sudo mkdir -p \$LOCAL_DIR
 
 # 检查远程目录是否存在
 if sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \$REMOTE_USER@\$REMOTE_HOST "[ -d \$REMOTE_DIR ]"; then
-    echo "正在检查目录: \$REMOTE_DIR"
+    echo "正在检查远程服务器目录: \$REMOTE_DIR"
+    echo -e " "
     # 找到最新的文件
     LATEST_FILE=\$(sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \$REMOTE_USER@\$REMOTE_HOST "find \$REMOTE_DIR -type f -printf '%T@ %p\n' | sort -nr | head -n 1 | cut -d' ' -f2")
     
@@ -105,20 +106,29 @@ if sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \
     echo "本地最新文件为: \$LOCAL_LATEST_FILENAME"
     echo -e " "
     echo "======================================================"
+    echo -e " "
     # 比较文件名
     if [ "\$REMOTE_LATEST_FILENAME" != "\$LOCAL_LATEST_FILENAME" ]; then
         echo "发现新文件，正在同步..."
         echo -e "======================================================"
         # 使用 rsync 同步最新的文件到本地
         sshpass -p "\$REMOTE_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT" --progress "\$REMOTE_USER@\$REMOTE_HOST:\$LATEST_FILE" "\$LOCAL_DIR"
+        
         echo "备份完成。"
+        echo -e " "
         echo "======================================================"
     else
+        
         echo "最新文件已存在，无需备份。"
+        echo -e " "
         echo "======================================================"
     fi
 else
-    echo "远程目录不存在。"
+    echo "======================================================"
+    echo -e " "
+    echo "远程目录不存在。请检查 /etc/backup-Remote/backup_config.conf 文件中是否设置错误"
+    echo -e " "
+    echo "======================================================"
 fi
 
 # 管理本地备份文件数量
