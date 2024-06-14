@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# 创建存储配置和脚本的目录
+BACKUP_DIR="/etc/back-Remote"
+if [ ! -d "$BACKUP_DIR" ]; then
+    sudo mkdir -p $BACKUP_DIR
+fi
+
 # 获取用户输入的服务器信息
 read -p "请输入远程服务器IP: " REMOTE_HOST
 read -p "请输入服务器用户名 [默认: root]: " REMOTE_USER
@@ -13,7 +19,7 @@ read -p "请输入本地目录 [默认: /root/backup-$REMOTE_HOST]: " LOCAL_DIR
 LOCAL_DIR=${LOCAL_DIR:-/root/backup-$REMOTE_HOST}
 
 # 保存到配置文件
-CONFIG_FILE="backup_config.conf"
+CONFIG_FILE="$BACKUP_DIR/backup_config.conf"
 echo "REMOTE_HOST=$REMOTE_HOST" > $CONFIG_FILE
 echo "REMOTE_USER=$REMOTE_USER" >> $CONFIG_FILE
 echo "REMOTE_PASS=$REMOTE_PASS" >> $CONFIG_FILE
@@ -22,7 +28,7 @@ echo "REMOTE_DIR=$REMOTE_DIR" >> $CONFIG_FILE
 echo "LOCAL_DIR=$LOCAL_DIR" >> $CONFIG_FILE
 
 # 创建 back.sh 脚本
-cat <<EOF > back.sh
+cat <<EOF > $BACKUP_DIR/back.sh
 #!/bin/bash
 # 加载配置文件
 source \$(dirname \$0)/backup_config.conf
@@ -39,7 +45,7 @@ if ! command -v rsync &> /dev/null; then
 fi
 
 # 创建本地备份目录（如果不存在）
-mkdir -p \$LOCAL_DIR
+sudo mkdir -p \$LOCAL_DIR
 
 # 检查远程目录是否存在
 if sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \$REMOTE_USER@\$REMOTE_HOST "[ -d \$REMOTE_DIR ]"; then
@@ -72,8 +78,12 @@ fi
 EOF
 
 # 给 back.sh 脚本执行权限
-chmod +x back.sh
-echo "配置文件和备份脚本已创建。"
+sudo chmod +x $BACKUP_DIR/back.sh
+echo "配置文件和备份脚本已创建并保存在 $BACKUP_DIR。"
+
+# 创建符号链接
+sudo ln -sf $BACKUP_DIR/back.sh /usr/local/bin/back.sh
+echo "已创建符号链接，可以从任何位置运行 back.sh。"
 
 # 安排在脚本执行完毕后删除自身
 nohup bash -c "sleep 2; rm -- \"$0\"" &>/dev/null &
