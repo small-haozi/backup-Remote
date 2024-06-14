@@ -1,7 +1,8 @@
 #!/bin/bash
 
 echo -e "\033[1;94m设置备份脚本\033[0m"
-echo "------------------------"
+
+echo "======================================================"
 
 # 创建存储配置和脚本的目录
 BACKUP_DIR="/etc/back-Remote"
@@ -11,17 +12,19 @@ if [ ! -d "$BACKUP_DIR" ]; then
 fi
 
 echo -e "\033[1;94m请输入服务器信息:\033[0m"
-echo -e "======================================================"
+echo "======================================================"
+echo -e " "
 read -p "远程服务器IP: " REMOTE_HOST
 read -p "远程服务器用户名 [默认: root]: " REMOTE_USER
 REMOTE_USER=${REMOTE_USER:-root}
-read -sp "远程服务器密码: " REMOTE_PASS
+read -p "远程服务器密码: " REMOTE_PASS
 read -p "远程服务器端口 [默认: 22]: " REMOTE_PORT
 REMOTE_PORT=${REMOTE_PORT:-22}
 read -p "远程目录: " REMOTE_DIR
 read -p "本地目录 [默认: /root/backup-$REMOTE_HOST]: " LOCAL_DIR
 LOCAL_DIR=${LOCAL_DIR:-/root/backup-$REMOTE_HOST}
-echo -e "======================================================"
+echo -e " "
+echo "======================================================"
 echo -e " "
 echo -e "当前设置信息为："
 echo -e " "
@@ -33,11 +36,11 @@ echo -e "远程目录:$REMOTE_DIR"
 echo -e "本地目录:$LOCAL_DIR"
 echo -e " "
 echo -e " 请仔细确认是否输入错误！！如需修改，请自行修改 /etc/back-Remote/backup_config.conf 文件"
-echo -e "======================================================"
+echo "======================================================"
 echo -e " "
 echo -e "\033[1;94m备份文件数量设置:\033[0m"
 echo -e " "
-echo -e "======================================================"
+echo "======================================================"
 read -p "是否设置最大备份文件数量? (y/n): " SET_MAX_BACKUPS
 if [ "$SET_MAX_BACKUPS" = "y" ]; then
     read -p "最大备份文件数量: " MAX_BACKUPS
@@ -69,13 +72,13 @@ source /etc/back-Remote/backup_config.conf
 # 检查并安装 sshpass 和 rsync
 if ! command -v sshpass &> /dev/null; then
     echo -e "\033[0;33msshpass 未安装，正在安装...\033[0m"
-    echo -e "======================================================"
+    echo "======================================================"
     sudo apt-get install -y sshpass
 fi
 
 if ! command -v rsync &> /dev/null; then
     echo -e "\033[0;33mrsync 未安装，正在安装...\033[0m"
-    echo -e "======================================================"
+    echo "======================================================"
     sudo apt-get install -y rsync
 fi
 
@@ -95,11 +98,13 @@ if sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \
     REMOTE_LATEST_FILENAME=\$(basename "\$LATEST_FILE")
     LOCAL_LATEST_FILENAME=\$(basename "\$LOCAL_LATEST_FILE")
     
-    echo -e "======================================================"
+    echo "======================================================"
+    echo -e " "
     echo "远程最新文件为: \$REMOTE_LATEST_FILENAME"
     echo -e " "
     echo "本地最新文件为: \$LOCAL_LATEST_FILENAME"
-    echo -e "======================================================"
+    echo -e " "
+    echo "======================================================"
     # 比较文件名
     if [ "\$REMOTE_LATEST_FILENAME" != "\$LOCAL_LATEST_FILENAME" ]; then
         echo "发现新文件，正在同步..."
@@ -107,10 +112,10 @@ if sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \
         # 使用 rsync 同步最新的文件到本地
         sshpass -p "\$REMOTE_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT" --progress "\$REMOTE_USER@\$REMOTE_HOST:\$LATEST_FILE" "\$LOCAL_DIR"
         echo "备份完成。"
-        echo -e "======================================================"
+        echo "======================================================"
     else
         echo "最新文件已存在，无需备份。"
-        echo -e "======================================================"
+        echo "======================================================"
     fi
 else
     echo "远程目录不存在。"
@@ -128,7 +133,7 @@ EOF
 
 # 给 back.sh 脚本执行权限
 sudo chmod +x $BACKUP_DIR/back.sh
-echo -e "======================================================"
+echo "======================================================"
 echo -e " "
 echo -e "\033[1;94m配置文件和备份脚本已创建并保存在\033[0m \033[1;92m $BACKUP_DIR。\033[0m"
 echo -e " "
@@ -136,7 +141,7 @@ echo -e " "
 sudo ln -sf $BACKUP_DIR/back.sh /usr/local/bin/back.sh
 echo -e "\033[1;94m已创建符号链接，可以从任何位置运行\033[0m \033[1;92m back.sh。\033[0m"
 echo -e " "
-echo -e "======================================================"
+echo "======================================================"
 
 # 安排在脚本执行完毕后删除自身
 nohup bash -c "sleep 2; rm -- \"$0\"" &>/dev/null &
