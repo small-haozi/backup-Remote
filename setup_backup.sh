@@ -53,11 +53,13 @@ source /etc/back-Remote/backup_config.conf
 # 检查并安装 sshpass 和 rsync
 if ! command -v sshpass &> /dev/null; then
     echo -e "\033[0;33msshpass 未安装，正在安装...\033[0m"
+    echo -e "======================================================"
     sudo apt-get install -y sshpass
 fi
 
 if ! command -v rsync &> /dev/null; then
     echo -e "\033[0;33mrsync 未安装，正在安装...\033[0m"
+    echo -e "======================================================"
     sudo apt-get install -y rsync
 fi
 
@@ -77,17 +79,22 @@ if sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \
     REMOTE_LATEST_FILENAME=\$(basename "\$LATEST_FILE")
     LOCAL_LATEST_FILENAME=\$(basename "\$LOCAL_LATEST_FILE")
     
+    echo -e "======================================================"
     echo "远程最新文件为: \$REMOTE_LATEST_FILENAME"
+    echo -e " "
     echo "本地最新文件为: \$LOCAL_LATEST_FILENAME"
-    
+    echo -e "======================================================"
     # 比较文件名
     if [ "\$REMOTE_LATEST_FILENAME" != "\$LOCAL_LATEST_FILENAME" ]; then
         echo "发现新文件，正在同步..."
+        echo -e "======================================================"
         # 使用 rsync 同步最新的文件到本地
         sshpass -p "\$REMOTE_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT" --progress "\$REMOTE_USER@\$REMOTE_HOST:\$LATEST_FILE" "\$LOCAL_DIR"
         echo "备份完成。"
+        echo -e "======================================================"
     else
         echo "最新文件已存在，无需备份。"
+        echo -e "======================================================"
     fi
 else
     echo "远程目录不存在。"
@@ -106,11 +113,13 @@ EOF
 # 给 back.sh 脚本执行权限
 sudo chmod +x $BACKUP_DIR/back.sh
 echo -e "======================================================"
+echo -e " "
 echo -e "\033[1;94m配置文件和备份脚本已创建并保存在\033[0m \033[1;92m $BACKUP_DIR。\033[0m"
-
+echo -e " "
 # 创建符号链接
 sudo ln -sf $BACKUP_DIR/back.sh /usr/local/bin/back.sh
 echo -e "\033[1;94m已创建符号链接，可以从任何位置运行\033[0m \033[1;92m back.sh。\033[0m"
+echo -e " "
 echo -e "======================================================"
 
 # 安排在脚本执行完毕后删除自身
