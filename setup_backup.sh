@@ -31,7 +31,7 @@ echo "LOCAL_DIR=$LOCAL_DIR" >> $CONFIG_FILE
 cat <<EOF > $BACKUP_DIR/back.sh
 #!/bin/bash
 # 加载配置文件
-source \$(dirname \$0)/backup_config.conf
+source /etc/back-Remote/backup_config.conf
 
 # 检查并安装 sshpass 和 rsync
 if ! command -v sshpass &> /dev/null; then
