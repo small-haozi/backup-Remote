@@ -24,6 +24,7 @@ LOCAL_DIR=${LOCAL_DIR:-/root/backup-$REMOTE_HOST}
 echo -e "======================================================"
 echo -e " "
 echo -e "当前设置信息为："
+echo -e " "
 echo -e "远程服务器IP:$REMOTE_HOST"
 echo -e "远程服务器用户名:$REMOTE_USER"
 echo -e "远程服务器密码:$REMOTE_PASS"
