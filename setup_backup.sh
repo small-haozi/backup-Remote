@@ -87,6 +87,7 @@ sudo mkdir -p \$LOCAL_DIR
 
 # 检查远程目录是否存在
 if sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \$REMOTE_USER@\$REMOTE_HOST "[ -d \$REMOTE_DIR ]"; then
+    echo -e " "
     echo "正在检查远程服务器目录: \$REMOTE_DIR"
     echo -e " "
     # 找到最新的文件
