@@ -10,6 +10,7 @@ bash <(curl -L -s https://raw.githubusercontent.com/small-haozi/backup-Remote/ma
 crontab -e
 ```
 - ### 2 添加定时任务
+  以下为每小时备份一次的定时任务，如需要修改时间，请自行搜索定时规则
 ```
 0 * * * * /etc/back-Remote/back.sh
 ```
