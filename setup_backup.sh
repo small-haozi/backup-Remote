@@ -11,17 +11,31 @@ if [ ! -d "$BACKUP_DIR" ]; then
 fi
 
 echo -e "\033[1;94m请输入服务器信息:\033[0m"
+echo -e "======================================================"
 read -p "远程服务器IP: " REMOTE_HOST
-read -p "服务器用户名 [默认: root]: " REMOTE_USER
+read -p "远程服务器用户名 [默认: root]: " REMOTE_USER
 REMOTE_USER=${REMOTE_USER:-root}
-read -sp "服务器密码: " REMOTE_PASS
-echo
-read -p "服务器端口 [默认: 22]: " REMOTE_PORT
+read -sp "远程服务器密码: " REMOTE_PASS
+read -p "远程服务器端口 [默认: 22]: " REMOTE_PORT
 REMOTE_PORT=${REMOTE_PORT:-22}
 read -p "远程目录: " REMOTE_DIR
 read -p "本地目录 [默认: /root/backup-$REMOTE_HOST]: " LOCAL_DIR
 LOCAL_DIR=${LOCAL_DIR:-/root/backup-$REMOTE_HOST}
+echo -e "======================================================"
+echo -e " "
+echo -e "当前设置信息为："
+echo -e "远程服务器IP:$REMOTE_HOST"
+echo -e "远程服务器用户名:$REMOTE_USER"
+echo -e "远程服务器密码:$REMOTE_PASS"
+echo -e "远程服务器端口:$REMOTE_PORT"
+echo -e "远程目录:$REMOTE_DIR"
+echo -e "本地目录:$LOCAL_DIR"
+echo -e " "
+echo -e "======================================================"
+echo -e " "
 echo -e "\033[1;94m备份文件数量设置:\033[0m"
+echo -e " "
+echo -e "======================================================"
 read -p "是否设置最大备份文件数量? (y/n): " SET_MAX_BACKUPS
 if [ "$SET_MAX_BACKUPS" = "y" ]; then
     read -p "最大备份文件数量: " MAX_BACKUPS
