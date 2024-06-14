@@ -1,25 +1,30 @@
 #!/bin/bash
 
+echo -e "\n\033[1;34m设置备份脚本\033[0m"
+echo "------------------------"
+
 # 创建存储配置和脚本的目录
 BACKUP_DIR="/etc/back-Remote"
 if [ ! -d "$BACKUP_DIR" ]; then
     sudo mkdir -p $BACKUP_DIR
+    echo "已创建目录: $BACKUP_DIR"
 fi
 
-# 获取用户输入的服务器信息
-read -p "请输入远程服务器IP: " REMOTE_HOST
-read -p "请输入服务器用户名 [默认: root]: " REMOTE_USER
+echo -e "\n\033[1;32m请输入服务器信息:\033[0m"
+read -p "远程服务器IP: " REMOTE_HOST
+read -p "服务器用户名 [默认: root]: " REMOTE_USER
 REMOTE_USER=${REMOTE_USER:-root}
-read -sp "请输入服务器密码: " REMOTE_PASS
+read -sp "服务器密码: " REMOTE_PASS
 echo
-read -p "请输入服务器端口 [默认: 22]: " REMOTE_PORT
+read -p "服务器端口 [默认: 22]: " REMOTE_PORT
 REMOTE_PORT=${REMOTE_PORT:-22}
-read -p "请输入远程目录: " REMOTE_DIR
-read -p "请输入本地目录 [默认: /root/backup-$REMOTE_HOST]: " LOCAL_DIR
+read -p "远程目录: " REMOTE_DIR
+read -p "本地目录 [默认: /root/backup-$REMOTE_HOST]: " LOCAL_DIR
 LOCAL_DIR=${LOCAL_DIR:-/root/backup-$REMOTE_HOST}
+echo -e "\n\033[1;32m备份文件数量设置:\033[0m"
 read -p "是否设置最大备份文件数量? (y/n): " SET_MAX_BACKUPS
 if [ "$SET_MAX_BACKUPS" = "y" ]; then
-    read -p "请输入最大备份文件数量: " MAX_BACKUPS
+    read -p "最大备份文件数量: " MAX_BACKUPS
 fi
 
 # 删除旧的配置文件和脚本（如果存在）
@@ -38,6 +43,7 @@ if [ "$SET_MAX_BACKUPS" = "y" ]; then
     echo "MAX_BACKUPS=$MAX_BACKUPS" >> $CONFIG_FILE
 fi
 
+echo -e "\n\033[1;34m正在创建备份脚本...\033[0m"
 # 创建 back.sh 脚本
 cat <<EOF > $BACKUP_DIR/back.sh
 #!/bin/bash
@@ -46,12 +52,12 @@ source /etc/back-Remote/backup_config.conf
 
 # 检查并安装 sshpass 和 rsync
 if ! command -v sshpass &> /dev/null; then
-    echo "sshpass 未安装，正在安装..."
+    echo -e "\033[0;33msshpass 未安装，正在安装...\033[0m"
     sudo apt-get install -y sshpass
 fi
 
 if ! command -v rsync &> /dev/null; then
-    echo "rsync 未安装，正在安装..."
+    echo -e "\033[0;33mrsync 未安装，正在安装...\033[0m"
     sudo apt-get install -y rsync
 fi
 
@@ -99,11 +105,11 @@ EOF
 
 # 给 back.sh 脚本执行权限
 sudo chmod +x $BACKUP_DIR/back.sh
-echo "配置文件和备份脚本已创建并保存在 $BACKUP_DIR。"
+echo -e "\033[1;32m配置文件和备份脚本已创建并保存在 $BACKUP_DIR。\033[0m"
 
 # 创建符号链接
 sudo ln -sf $BACKUP_DIR/back.sh /usr/local/bin/back.sh
-echo "已创建符号链接，可以从任何位置运行 back.sh。"
+echo -e "\033[1;32m已创建符号链接，可以从任何位置运行 back.sh。\033[0m"
 
 # 安排在脚本执行完毕后删除自身
 nohup bash -c "sleep 2; rm -- \"$0\"" &>/dev/null &
