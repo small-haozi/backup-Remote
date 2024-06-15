@@ -15,7 +15,7 @@ bash <(curl -L -s https://raw.githubusercontent.com/small-haozi/backup-Remote/ma
     0 * * * * /etc/back-Remote/back.sh
     
   ### 3 保存并退出编辑器
-     保存你的更改并退出编辑器。在大多数编辑器中，你可以按 Ctrl+X 来退出，如果是使用 nano 编辑器，它会询问你是否保存更改，回答 Y 然后按 Enter 确认。
+  保存你的更改并退出编辑器。在大多数编辑器中，你可以按 Ctrl+X 来退出，如果是使用 nano 编辑器，它会询问你是否保存更改，回答 Y 然后按 Enter 确认。
   ### 4 确认定时任务已设置
      
      crontab -l
