@@ -21,11 +21,11 @@ bash <(curl -L -s https://raw.githubusercontent.com/small-haozi/backup-Remote/ma
      crontab -l
      
   ### 5 设置开机自启
-     cron 服务通常在大多数 Linux 发行版中默认启动。只要 cron 服务在系统启动时运行，你的定时任务就会自动启动。你可以通过以下命令确认 cron 服务的状态：
+     - cron 服务通常在大多数 Linux 发行版中默认启动。只要 cron 服务在系统启动时运行，你的定时任务就会自动启动。你可以通过以下命令确认 cron 服务的状态：
   ```
   sudo systemctl status cron
   ```
-     如果服务没有运行，你可以使用以下命令启动它，并设置为开机自启：
+     - 如果服务没有运行，你可以使用以下命令启动它，并设置为开机自启：
   ```
   sudo systemctl start cron
   sudo systemctl enable cron
