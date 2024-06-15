@@ -106,13 +106,11 @@ send_telegram_message() {
 if ! command -v sshpass &> /dev/null; then
     echo -e "\033[0;33msshpass 未安装，正在安装...\033[0m"
     sudo apt-get install -y sshpass
-    send_telegram_message "sshpass 未安装，正在安装..."
 fi
 
 if ! command -v rsync &> /dev/null; then
     echo -e "\033[0;33mrsync 未安装，正在安装...\033[0m"
     sudo apt-get install -y rsync
-    send_telegram_message "rsync 未安装，正在安装..."
 fi
 
 # 创建本地备份目录（如果不存在）
@@ -143,13 +141,13 @@ if sshpass -p "\$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT \
         echo -e "======================================================"
         # 使用 rsync 同步最新的文件到本地
         sshpass -p "\$REMOTE_PASS" rsync -avz -e "ssh -o StrictHostKeyChecking=no -p \$REMOTE_PORT" --progress "\$REMOTE_USER@\$REMOTE_HOST:\$LATEST_FILE" "\$LOCAL_DIR"
-        send_telegram_message "备份完成。最新文件：{filename}" "\$REMOTE_LATEST_FILENAME"
+        [ "$ENABLE_TELEGRAM" = "y" ] && send_telegram_message "备份完成。最新文件：{filename}" "\$REMOTE_LATEST_FILENAME"
         echo "备份完成。"
         echo -e " "
         echo "======================================================"
     else
         echo "最新文件已存在，无需备份。"
-        send_telegram_message "最新文件已存在，无需备份。文件名：{filename}" "\$REMOTE_LATEST_FILENAME"
+        [ "$ENABLE_TELEGRAM" = "y" ] && send_telegram_message "最新文件已存在，无需备份。文件名：{filename}" "\$REMOTE_LATEST_FILENAME"
         echo -e " "
         echo "======================================================"
     fi
@@ -157,7 +155,7 @@ else
     echo "======================================================"
     echo -e " "
     echo "远程目录不存在。请检查 /etc/backup-Remote/backup_config.conf 文件中是否设置错误"
-    send_telegram_message "远程目录不存在。请检查配置。"
+    [ "$ENABLE_TELEGRAM" = "y" ] && send_telegram_message "远程目录不存在。请检查配置。"
     echo -e " "
     echo "======================================================"
 fi
@@ -167,7 +165,7 @@ if [ ! -z "\$MAX_BACKUPS" ]; then
     cd \$LOCAL_DIR
     if [ \$(ls -1 | wc -l) -gt \$MAX_BACKUPS ]; then
         ls -t | tail -n +\$(expr \$MAX_BACKUPS + 1) | xargs rm -f
-        send_telegram_message "超出最大备份文件数量，已删除最旧的备份文件。"
+        [ "$ENABLE_TELEGRAM" = "y" ] && send_telegram_message "超出最大备份文件数量，已删除最旧的备份文件。"
         echo "超出最大备份文件数量，已删除最旧的备份文件。"
     fi
 fi
