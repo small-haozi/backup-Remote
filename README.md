@@ -4,6 +4,10 @@
 ```
 bash <(curl -L -s https://raw.githubusercontent.com/small-haozi/backup-Remote/main/setup_backup.sh)
 ```
+执行备份脚本
+```
+back.sh
+```
 ## 定时备份
   ### 1 编辑 crontab 文件
     
