@@ -8,6 +8,11 @@ bash <(curl -L -s https://raw.githubusercontent.com/small-haozi/backup-Remote/ma
 ```
 back.sh
 ```
+
+请注意 远程服务器必须安装rsync
+```
+sudo apt-get install -y rsync
+```
 ## 定时备份
   ### 1 编辑 crontab 文件
     
